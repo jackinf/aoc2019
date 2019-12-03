@@ -11,10 +11,11 @@ def direction_str_to_list(direction_str: str) -> List[Tuple[str, int]]:
     return [(x[0], int(x[1:])) for x in direction_str.split(',')]
 
 
-def get_lines(direction_list: List[Tuple[str, int]]) -> List[Tuple[int, int, int, int]]:
+def get_lines(direction_list: List[Tuple[str, int]]) -> List[Tuple[int, int, int, int, int]]:
     lines = []
     curr_x = 0
     curr_y = 0
+    total_steps = 0
     for i in range(len(direction_list)):
         direction, steps = direction_list[i]
         new_x = None
@@ -33,39 +34,37 @@ def get_lines(direction_list: List[Tuple[str, int]]) -> List[Tuple[int, int, int
             new_y = curr_y - steps
         if new_x is None or new_y is None:
             raise Exception("new_x or new_y is missing")
-        lines.append((curr_x, curr_y, new_x, new_y))
+        total_steps += steps
+        lines.append((curr_x, curr_y, new_x, new_y, total_steps))
         curr_x, curr_y = new_x, new_y
     return lines
 
 
-def get_intersections_between_lines(lines1: List[Tuple[int, int, int, int]], lines2: List[Tuple[int, int, int, int]]) -> List[Tuple[int, int, int]]:
+def get_smallest_distance(lines1: List[Tuple[int, int, int, int, int]], lines2: List[Tuple[int, int, int, int, int]]) -> int:
     smallest_distance = sys.maxsize
-    results = []
     for curr_line1 in lines1:
-        x1_start, y1_start, x1_end, y1_end = curr_line1
-        line1_horizontal = True if x1_start == x1_end else False
+        x1_start, y1_start, x1_end, y1_end, steps = curr_line1
+        line1_vertical = True if x1_start == x1_end else False
 
         for curr_line2 in lines2:
-            x2_start, y2_start, x2_end, y2_end = curr_line2
-            line2_horizontal = True if x2_start == x2_end else False
+            x2_start, y2_start, x2_end, y2_end, steps = curr_line2
+            line2_vertical = True if x2_start == x2_end else False
 
-            if line1_horizontal == line2_horizontal:
+            if line1_vertical == line2_vertical:
                 continue
 
-            if line1_horizontal:
+            if line1_vertical:
                 x1 = x1_start  # = x1_end
                 y2 = y2_start  # = y2_end
-                if x2_start < x1 < x2_end and y1_start < y2 < y1_end or x2_start > x1 > x2_end and y1_start > y2 > y1_end:
+                if (x2_start < x1 < x2_end or x2_start > x1 > x2_end) and (y1_start < y2 < y1_end or y1_start > y2 > y1_end):
                     px, py = abs(x1), abs(y2)
                     smallest_distance = min(smallest_distance, px + py)
-                    results.append((px, py, px + py))
             else:
                 x2 = x2_start  # = x2_end
                 y1 = y1_start  # = y1_end
-                if x1_start < x2 < x1_end and y2_start < y1 < y2_end or x1_start > x2 > x1_end and y2_start > y1 > y2_end:
+                if (x1_start < x2 < x1_end or x1_start > x2 > x1_end) and (y2_start < y1 < y2_end or y2_start > y1 > y2_end):
                     px, py = abs(x2), abs(y1)
                     smallest_distance = min(smallest_distance, px + py)
-                    results.append((px, py, px + py))
     return smallest_distance
 
 
@@ -74,9 +73,7 @@ def solution(inputs: dict):
     wire2_directions = direction_str_to_list(inputs["wire2"])
     lines1 = get_lines(wire1_directions)
     lines2 = get_lines(wire2_directions)
-    print(lines1)
-    intersections = get_intersections_between_lines(lines1, lines2)
-    return intersections
+    return get_smallest_distance(lines1, lines2)
 
 
 test1_inputs = {
@@ -99,5 +96,5 @@ with open('input.txt', 'r') as f:
         "wire1": line1,
         "wire2": line2
     }
-    result = solution(task_input)  # managed to get a correct solution though example numbers don't match for some reason
+    result = solution(test3_inputs)  # managed to get a correct solution though example numbers don't match for some reason
     print(result)
