@@ -11,25 +11,6 @@ def direction_str_to_list(direction_str: str) -> List[Tuple[str, int]]:
     return [(x[0], int(x[1:])) for x in direction_str.split(',')]
 
 
-def walk_in_grid(direction_list: List[Tuple[str, int]]) -> List[Tuple[int, int]]:
-    visited_coordinates = []
-    curr_x = 0
-    curr_y = 0
-    for i in range(len(direction_list)):
-        direction, steps = direction_list[i]
-        for step in range(steps):
-            if direction == "R":
-                curr_x += 1
-            if direction == "L":
-                curr_x -= 1
-            if direction == "U":
-                curr_y += 1
-            if direction == "D":
-                curr_y -= 1
-            visited_coordinates.append((curr_x, curr_y))
-    return visited_coordinates
-
-
 def get_lines(direction_list: List[Tuple[str, int]]) -> List[Tuple[int, int, int, int]]:
     lines = []
     curr_x = 0
@@ -88,33 +69,7 @@ def get_intersections_between_lines(lines1: List[Tuple[int, int, int, int]], lin
     return smallest_distance
 
 
-def calculate_manhattan_distance(x: int, y: int):
-    return abs(x + y)
-
-
-def get_distance_to_closest_intersection(wire1: List[Tuple[int, int]], wire2: List[Tuple[int, int]]) -> int:
-    smallest_distance = sys.maxsize
-    for wire1_coord in wire1:
-        for wire2_coord in wire2:
-            x1, y1 = wire1_coord
-            x2, y2 = wire2_coord
-            if x1 == x2 and y1 == y2:
-                distance = calculate_manhattan_distance(x1, y1)
-                if distance < smallest_distance:
-                    smallest_distance = distance
-    return smallest_distance
-
-
-def solution1(inputs: dict) -> int:
-    wire1_directions = direction_str_to_list(inputs["wire1"])
-    wire2_directions = direction_str_to_list(inputs["wire2"])
-    wire1_visited_locations = walk_in_grid(wire1_directions)
-    wire2_visited_locations = walk_in_grid(wire2_directions)
-    end_result = get_distance_to_closest_intersection(wire1_visited_locations, wire2_visited_locations)
-    return end_result
-
-
-def solution2(inputs: dict):
+def solution(inputs: dict):
     wire1_directions = direction_str_to_list(inputs["wire1"])
     wire2_directions = direction_str_to_list(inputs["wire2"])
     lines1 = get_lines(wire1_directions)
@@ -144,5 +99,5 @@ with open('input.txt', 'r') as f:
         "wire1": line1,
         "wire2": line2
     }
-    result = solution2(task_input)  # managed to get a correct solution though example numbers don't match for some reason
+    result = solution(task_input)  # managed to get a correct solution though example numbers don't match for some reason
     print(result)
