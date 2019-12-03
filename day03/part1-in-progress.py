@@ -57,13 +57,7 @@ def get_lines(direction_list: List[Tuple[str, int]]) -> List[Tuple[int, int, int
     return lines
 
 
-def find_intersection(x1,y1,x2,y2,x3,y3,x4,y4):
-    px= ( (x1*y2-y1*x2)*(x3-x4)-(x1-x2)*(x3*y4-y3*x4) ) / ( (x1-x2)*(y3-y4)-(y1-y2)*(x3-x4) )
-    py= ( (x1*y2-y1*x2)*(y3-y4)-(y1-y2)*(x3*y4-y3*x4) ) / ( (x1-x2)*(y3-y4)-(y1-y2)*(x3-x4) )
-    return int(px), int(py)
-
-
-def get_intersections_between_lines(lines1: List[Tuple[int, int, int, int]], lines2: List[Tuple[int, int, int, int]]) -> List[Tuple[int, int]]:
+def get_intersections_between_lines(lines1: List[Tuple[int, int, int, int]], lines2: List[Tuple[int, int, int, int]]) -> List[Tuple[int, int, int]]:
     smallest_distance = sys.maxsize
     results = []
     for curr_line1 in lines1:
@@ -78,19 +72,19 @@ def get_intersections_between_lines(lines1: List[Tuple[int, int, int, int]], lin
                 continue
 
             if line1_horizontal:
-                x1 = x1_start
-                y2 = y2_start
+                x1 = x1_start  # = x1_end
+                y2 = y2_start  # = y2_end
                 if x2_start < x1 < x2_end and y1_start < y2 < y1_end or x2_start > x1 > x2_end and y1_start > y2 > y1_end:
-                    px, py = find_intersection(x1_start, y1_start, x1_end, y1_end, x2_start, y2_start, x2_end, y2_end)
+                    px, py = abs(x1), abs(y2)
                     smallest_distance = min(smallest_distance, px + py)
-                    results.append((px, py))
+                    results.append((px, py, px + py))
             else:
-                x2 = x2_start
-                y1 = y1_start
+                x2 = x2_start  # = x2_end
+                y1 = y1_start  # = y1_end
                 if x1_start < x2 < x1_end and y2_start < y1 < y2_end or x1_start > x2 > x1_end and y2_start > y1 > y2_end:
-                    px, py = find_intersection(x1_start, y1_start, x1_end, y1_end, x2_start, y2_start, x2_end, y2_end)
+                    px, py = abs(x2), abs(y1)
                     smallest_distance = min(smallest_distance, px + py)
-                    results.append((px, py))
+                    results.append((px, py, px + py))
     return smallest_distance
 
 
@@ -125,6 +119,7 @@ def solution2(inputs: dict):
     wire2_directions = direction_str_to_list(inputs["wire2"])
     lines1 = get_lines(wire1_directions)
     lines2 = get_lines(wire2_directions)
+    print(lines1)
     intersections = get_intersections_between_lines(lines1, lines2)
     return intersections
 
@@ -149,5 +144,5 @@ with open('input.txt', 'r') as f:
         "wire1": line1,
         "wire2": line2
     }
-    result = solution2(test3_inputs)
+    result = solution2(task_input)  # managed to get a correct solution though example numbers don't match for some reason
     print(result)
