@@ -1,8 +1,8 @@
-from typing import List
+from typing import List, Generator
 
 
 class Solution:
-    def solve(self, inputs: List[int], input_value: int):
+    def solve(self, inputs: List[int], input_value: int) -> Generator[int]:
         i = 0
         while inputs[i] != 99 and i <= len(inputs):
             opcode = inputs[i]
@@ -27,7 +27,8 @@ class Solution:
                 i += 2
             elif opcode == 4:
                 value = self.get_position_or_immediate_value(inputs, i + 1, first_pos_mode)
-                print(value)
+                # print(value)
+                yield value
                 i += 2
             elif opcode == 5:
                 first = self.get_position_or_immediate_value(inputs, i + 1, first_pos_mode)
@@ -74,6 +75,9 @@ sol.solve([int(x) for x in test_case.split(',')], 9)  # more than 8 outputs 1001
 with open('input.txt', 'r') as f:
     inputs = [int(x) for x in f.readline().split(',')]
     print('=== PART 1 ===')
-    sol.solve(inputs[:], 1)  # outputs answer to the first part
+    solution1 = sol.solve(inputs[:], 1)
+    print(list(solution1))
+
     print('=== PART 2 ===')
-    sol.solve(inputs[:], 5)  # outputs answer to the second part
+    solution2 = sol.solve(inputs[:], 5)
+    print(list(solution2))
