@@ -28,6 +28,7 @@ with open('input.txt', 'r') as f:
     for item in all_unique:
         nodes_dict[item] = Node(item, None)
 
+    # connect all the nodes between each-other
     for parent_val, child_val in lines:
         parent = nodes_dict[parent_val]
         child = nodes_dict[child_val]
@@ -38,9 +39,11 @@ with open('input.txt', 'r') as f:
     you_node = None
     san_node = None
 
+    # traverse each node till the last parent
     for node in nodes_dict.values():
         parent = node.parent
 
+        # part 2 - find YOU and SAN nodes
         if you_node is None and node.value == "YOU":
             you_node = node
         if san_node is None and node.value == "SAN":
