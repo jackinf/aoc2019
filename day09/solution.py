@@ -27,4 +27,5 @@ print(sol.run(test_case_3))
 
 with open('input.txt', 'r') as f:
     file_input = f.readline()
-    print(sol.run(file_input, [1]))
+    print(sol.run(file_input[:], [1]))
+    print(sol.run(file_input[:], [2]))
