@@ -11,16 +11,18 @@ class OpCode(IntEnum):
     JUMP_FALSE = 6
     LESSTHAN = 7
     EQUAL = 8
+    BASE = 9
     HALT = 99
 
 
 class Intcode:
     def __init__(self, registry: List[int], inputs: List[int], **kwargs):
-        self.registry = registry
+        self.registry = registry + [0] * 1000
         self.inputs = inputs
         self.break_on_output = kwargs['break_on_output'] if 'break_on_output' in kwargs else False
         self.done = False
         self.address = 0
+        self.base = 0
 
     def run(self) -> Generator[int, None, None]:
         inputs = self.registry
@@ -75,6 +77,10 @@ class Intcode:
                 second = self.get_position_or_immediate_value(inputs, self.address + 2, second_pos_mode)
                 inputs[inputs[self.address + 3]] = 1 if first == second else 0
                 self.address += 4
+            elif opcode == OpCode.BASE:
+                self.base += self.get_position_or_immediate_value(inputs, self.address + 1, first_pos_mode)
+                self.address += 2
+                pass
             elif opcode == OpCode.HALT:
                 self.done = True
                 break
@@ -87,4 +93,9 @@ class Intcode:
         return p_opcode, first_pos_mode, second_pos_mode
 
     def get_position_or_immediate_value(self, arr: List[int], index: int, pos_mode: int) -> int:
-        return arr[index] if pos_mode == 1 else arr[arr[index]]
+        if pos_mode == 1:
+            return arr[index]
+        elif pos_mode == 0:
+            return arr[arr[index]]
+        elif pos_mode == 2:
+            return arr[arr[index] + self.base]
