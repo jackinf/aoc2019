@@ -9,27 +9,27 @@ def parse_inputs(test_case: str) -> List[int]:
 
 
 class Solution:
-    def run_part1(self, inputs: List[int]) -> int:
+    def run_part1(self, registry: List[int]) -> int:
         max_output = 0
         for permutation in permutations([4, 3, 2, 1, 0]):
             last_output = 0
             for phase in permutation:
-                result = list(Intcode(inputs[:], [phase, last_output]).run())
+                result = list(Intcode(registry[:], [phase, last_output]).run())
                 last_output = result[-1]
             max_output = max(max_output, last_output)
         return max_output
 
-    def run_part2(self, inputs: List[int]) -> int:
+    def run_part2(self, registry: List[int]) -> int:
         max_output = 0
         for permutation in permutations([5, 6, 7, 8, 9]):
             last_output = 0
             intcodes = []
             for phase in permutation:
-                intcodes.append(Intcode(inputs[:], [phase], break_on_output=True))
+                intcodes.append(Intcode(registry[:], [phase], break_on_output=True))
 
             while any(intcode.done is False for intcode in intcodes):
                 for intcode in intcodes:
-                    intcode.input_values.append(last_output)
+                    intcode.inputs.append(last_output)
                     result = list(intcode.run())
                     if len(result) > 0:
                         last_output = result[-1]
@@ -55,8 +55,8 @@ print(sol.run_part2(parse_inputs(test_case_4)))
 print(sol.run_part2(parse_inputs(test_case_5)))
 
 with open('input.txt', 'r') as f:
-    parsed_inputs = parse_inputs(f.readline())
+    parsed_registry = parse_inputs(f.readline())
     print("\nPART 1")
-    print(sol.run_part1(parsed_inputs))
+    print(sol.run_part1(parsed_registry))
     print("\nPART 2")
-    print(sol.run_part2(parsed_inputs))
+    print(sol.run_part2(parsed_registry))

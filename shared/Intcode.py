@@ -15,19 +15,19 @@ class OpCode(IntEnum):
 
 
 class Intcode:
-    def __init__(self, inputs: List[int], input_values: List[int], **kwargs):
+    def __init__(self, registry: List[int], inputs: List[int], **kwargs):
+        self.registry = registry
         self.inputs = inputs
-        self.input_values = input_values
         self.break_on_output = kwargs['break_on_output'] if 'break_on_output' in kwargs else False
         self.done = False
-        self.instruction_pointer = 0
+        self.address = 0
 
     def run(self) -> Generator[int, None, None]:
-        inputs = self.inputs
-        input_values = self.input_values
+        inputs = self.registry
+        input_values = self.inputs
 
-        while self.instruction_pointer <= len(inputs):
-            opcode = inputs[self.instruction_pointer]
+        while self.address <= len(inputs):
+            opcode = inputs[self.address]
             first_pos_mode = 0
             second_pos_mode = 0
 
@@ -35,46 +35,46 @@ class Intcode:
                 opcode, first_pos_mode, second_pos_mode = self.parse_opcode(opcode)
 
             if opcode == OpCode.ADD:
-                first = self.get_position_or_immediate_value(inputs, self.instruction_pointer + 1, first_pos_mode)
-                second = self.get_position_or_immediate_value(inputs, self.instruction_pointer + 2, second_pos_mode)
-                inputs[inputs[self.instruction_pointer + 3]] = first + second
-                self.instruction_pointer += 4
+                first = self.get_position_or_immediate_value(inputs, self.address + 1, first_pos_mode)
+                second = self.get_position_or_immediate_value(inputs, self.address + 2, second_pos_mode)
+                inputs[inputs[self.address + 3]] = first + second
+                self.address += 4
             elif opcode == OpCode.MULT:
-                first = self.get_position_or_immediate_value(inputs, self.instruction_pointer + 1, first_pos_mode)
-                second = self.get_position_or_immediate_value(inputs, self.instruction_pointer + 2, second_pos_mode)
-                inputs[inputs[self.instruction_pointer + 3]] = first * second
-                self.instruction_pointer += 4
+                first = self.get_position_or_immediate_value(inputs, self.address + 1, first_pos_mode)
+                second = self.get_position_or_immediate_value(inputs, self.address + 2, second_pos_mode)
+                inputs[inputs[self.address + 3]] = first * second
+                self.address += 4
             elif opcode == OpCode.INPUT:
-                inputs[inputs[self.instruction_pointer + 1]] = input_values.pop(0)
-                self.instruction_pointer += 2
+                inputs[inputs[self.address + 1]] = input_values.pop(0)
+                self.address += 2
             elif opcode == OpCode.OUTPUT:
-                value = self.get_position_or_immediate_value(inputs, self.instruction_pointer + 1, first_pos_mode)
+                value = self.get_position_or_immediate_value(inputs, self.address + 1, first_pos_mode)
                 yield value
-                self.instruction_pointer += 2
+                self.address += 2
                 if self.break_on_output:
                     break
             elif opcode == OpCode.JUMP_TRUE:
-                first = self.get_position_or_immediate_value(inputs, self.instruction_pointer + 1, first_pos_mode)
+                first = self.get_position_or_immediate_value(inputs, self.address + 1, first_pos_mode)
                 if first != 0:
-                    self.instruction_pointer = self.get_position_or_immediate_value(inputs, self.instruction_pointer + 2, second_pos_mode)
+                    self.address = self.get_position_or_immediate_value(inputs, self.address + 2, second_pos_mode)
                 else:
-                    self.instruction_pointer += 3
+                    self.address += 3
             elif opcode == OpCode.JUMP_FALSE:
-                first = self.get_position_or_immediate_value(inputs, self.instruction_pointer + 1, first_pos_mode)
+                first = self.get_position_or_immediate_value(inputs, self.address + 1, first_pos_mode)
                 if first == 0:
-                    self.instruction_pointer = self.get_position_or_immediate_value(inputs, self.instruction_pointer + 2, second_pos_mode)
+                    self.address = self.get_position_or_immediate_value(inputs, self.address + 2, second_pos_mode)
                 else:
-                    self.instruction_pointer += 3
+                    self.address += 3
             elif opcode == OpCode.LESSTHAN:
-                first = self.get_position_or_immediate_value(inputs, self.instruction_pointer + 1, first_pos_mode)
-                second = self.get_position_or_immediate_value(inputs, self.instruction_pointer + 2, second_pos_mode)
-                inputs[inputs[self.instruction_pointer + 3]] = 1 if first < second else 0
-                self.instruction_pointer += 4
+                first = self.get_position_or_immediate_value(inputs, self.address + 1, first_pos_mode)
+                second = self.get_position_or_immediate_value(inputs, self.address + 2, second_pos_mode)
+                inputs[inputs[self.address + 3]] = 1 if first < second else 0
+                self.address += 4
             elif opcode == OpCode.EQUAL:
-                first = self.get_position_or_immediate_value(inputs, self.instruction_pointer + 1, first_pos_mode)
-                second = self.get_position_or_immediate_value(inputs, self.instruction_pointer + 2, second_pos_mode)
-                inputs[inputs[self.instruction_pointer + 3]] = 1 if first == second else 0
-                self.instruction_pointer += 4
+                first = self.get_position_or_immediate_value(inputs, self.address + 1, first_pos_mode)
+                second = self.get_position_or_immediate_value(inputs, self.address + 2, second_pos_mode)
+                inputs[inputs[self.address + 3]] = 1 if first == second else 0
+                self.address += 4
             elif opcode == OpCode.HALT:
                 self.done = True
                 break
