@@ -55,5 +55,9 @@ with open('input.txt', 'r') as f:
 
     print("PART 1")
     am.find_asteroids_for_all(grid1)
-    print(am.ask_all_asteroids_how_much_they_see(grid1))
+    max_asteroid, max_asteroids_seen = am.ask_all_asteroids_how_much_they_see(grid1)
+    print(max_asteroid, max_asteroids_seen)
+
+    print("PART 2 - unsolved")
+    max_asteroid.shoot_asteroids()
 
