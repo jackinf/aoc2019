@@ -29,7 +29,6 @@ class Grid:
 
     def print_grid(self):
         print('PRINTING GRID')
-        print(self.cols)
         output = ""
         rows, cols = self.get_rows_cols_count()
         for y in range(cols):
