@@ -29,11 +29,14 @@ class Intcode:
         self.done = False
         self.address = 0
         self.base = 0
+        self.debug = kwargs['debug'] if 'debug' in kwargs else False
 
     def run(self) -> Generator[int, None, None]:
         registry = self.registry
 
         while self.address <= len(registry):
+            if self.debug:
+                print(f'Address: {self.address}')
             opcode = registry[self.address]
             first_pos_mode = 0
             second_pos_mode = 0

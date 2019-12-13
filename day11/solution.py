@@ -1,4 +1,5 @@
 from enum import IntEnum
+from time import sleep
 from typing import Tuple, Dict, List
 
 from shared.Intcode import Intcode
@@ -21,6 +22,11 @@ class RobotAction(IntEnum):
     TurnAndMove = 2
 
 
+class Color(IntEnum):
+    Black = 0
+    White = 1
+
+
 class Grid:
     def __init__(self):
         self.painted_squares: Dict[Tuple[int, int], int] = {}
@@ -36,12 +42,39 @@ class Grid:
     def get_squares_painted_count(self):
         return len(self.painted_squares)
 
+    def print_painted_text(self):
+        keys = self.painted_squares.keys()
+        x_offset = abs(min([key[0] for key in keys]))
+        y_offset = abs(min([key[1] for key in keys]))
+        len_x = max([key[0] for key in keys]) + 1
+        len_y = max([key[1] for key in keys]) + 1
+        arr = []
+        for x in range(len_x + x_offset):
+            arr.append([])
+            for y in range(len_y + y_offset):
+                arr[-1].append("  ")
+
+        print(f'Len x with offset: {len_x + x_offset}')
+        print(f'Len y with offset: {len_y + y_offset}')
+        for k in self.painted_squares.keys():
+            x = k[0]
+            y = k[1]
+            try:
+                arr[x + x_offset][y + y_offset] = "▓▓" if self.get_square_color(x, y) == 1 else "  "
+            except:
+                print(f'Caught on x:{x + x_offset} and y:{y + y_offset}')
+
+        arr = [*zip(*arr)]  # transpose
+        for x in arr:
+            print(''.join(x))
+            # print('\n')
+
 
 class PaintRobot:
-    def __init__(self, registry: List[int], grid: Grid):
+    def __init__(self, registry: List[int], grid: Grid, starting_color: Color):
         self.x = 0
         self.y = 0
-        self.intcode = Intcode(registry, [grid.get_square_color(self.x, self.y)], break_on_output=True)
+        self.intcode = Intcode(registry, [starting_color], break_on_output=False, debug=False)
         self.move_direction: MoveDirection = MoveDirection.North
         self.next_action = RobotAction.Paint
         self.grid = grid
@@ -67,8 +100,7 @@ class PaintRobot:
             self.x += 1
 
     def run(self):
-        while not self.intcode.done:
-            output = next(self.intcode.run())
+        for output in self.intcode.run():
             if self.next_action == RobotAction.Paint:
                 self.grid.paint(self.x, self.y, output)
                 self.next_action = RobotAction.TurnAndMove
@@ -82,7 +114,15 @@ class PaintRobot:
 
 with open('input.txt', 'r') as f:
     registry = [int(x) for x in f.readline().split(',')]
-    grid = Grid()
-    robot = PaintRobot(registry, grid)
-    robot.run()
-    print(grid.get_squares_painted_count())
+    grid1 = Grid()
+    robot1 = PaintRobot(registry, grid1, Color.Black)
+    robot1.run()
+    print("PART 1")
+    print(grid1.get_squares_painted_count())
+
+    print("PART 2")
+    grid2 = Grid()
+    robot2 = PaintRobot(registry, grid2, Color.White)
+    robot2.run()
+    grid2.print_painted_text()
+
