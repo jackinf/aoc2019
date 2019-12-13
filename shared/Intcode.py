@@ -123,3 +123,6 @@ class Intcode:
             return index
         if pos_mode == PosMode.RELATIVE:
             return self.registry[index] + self.base
+
+    def append_input(self, op: int):
+        self.inputs.append(op)
