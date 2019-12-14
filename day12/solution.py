@@ -1,5 +1,5 @@
 import math
-from copy import copy
+import copy
 from typing import List
 
 class Position:
@@ -56,8 +56,11 @@ class SolarSystem:
         self.step = 0
         self.planets = planets
 
+        copied = copy.deepcopy(planets)
+        self.initial_planets = {planet.name:{"pos": planet.pos, "vel": planet.vel} for planet in copied}
+
     def do_step(self):
-        positions = [copy(planet.pos) for planet in self.planets]
+        positions = [copy.copy(planet.pos) for planet in self.planets]
         for planet in self.planets:
             planet.apply_gravity(positions)
             planet.apply_velocity()
@@ -68,11 +71,27 @@ class SolarSystem:
         for planet in self.planets:
             print(f'pos=<x={planet.pos.x}, y=  {planet.pos.y}, z= {planet.pos.z}>, vel=<x= {planet.vel.x}, y= {planet.vel.y}, z= {planet.vel.z}>')
 
-    def get_total_energy(self):
+    def get_total_energy(self) -> int:
         return sum([x.get_potential_energy() * x.get_kinetic_energy() for x in self.planets])
 
+    def is_initial(self) -> bool:
+        for current_planet in self.planets:
+            initial_planet = self.initial_planets[current_planet.name]
+            initial_pos, initial_vel = initial_planet["pos"], initial_planet["vel"]
+            pos_x_at_initial = True if initial_pos.x == current_planet.pos.x else False
+            pos_y_at_initial = True if initial_pos.y == current_planet.pos.y else False
+            pos_z_at_initial = True if initial_pos.z == current_planet.pos.z else False
 
-with open('input.txt', 'r') as f:
+            vel_x_at_initial = True if initial_vel.x == current_planet.vel.x else False
+            vel_y_at_initial = True if initial_vel.y == current_planet.vel.y else False
+            vel_z_at_initial = True if initial_vel.z == current_planet.vel.z else False
+            if not pos_x_at_initial or not pos_y_at_initial or not pos_z_at_initial \
+                and not vel_x_at_initial or not vel_y_at_initial or not vel_z_at_initial:
+                return False
+        return True
+
+
+with open('test-input-2.txt', 'r') as f:
     planets = []
     for line in f.readlines():
         coord_step1 = line.strip()[1:-1].split(',')
@@ -83,8 +102,16 @@ with open('input.txt', 'r') as f:
         planets.append(planet)
 
     solar_system = SolarSystem(planets)
-    for _ in range(1000):
+    while True:
         solar_system.do_step()
-        if solar_system.step % 10 == 0:
+
+        # PART 1
+        if solar_system.step // 1001 == 0 and solar_system.step % 1000 == 0:
             solar_system.print()
             print(solar_system.get_total_energy())
+
+        # PART 2
+        if solar_system.is_initial():
+            solar_system.print()
+            print(solar_system.get_total_energy())
+            break
