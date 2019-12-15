@@ -1,0 +1,21 @@
+[1 FUEL, 1 E, 1 D, 1 C, 1 B, 10 A]
+
+FUEL -> A,E ->
+            -> A -> ORE
+            -> E -> A,D ->
+                        -> A -> ORE
+                        -> D -> A,C ->
+                                    -> A -> ORE
+                                       C -> A,B ->
+                                                -> A -> ORE
+                                                   B -> ORE
+
+take fuel elements (7 A, 1 E).
+
+get_simple_elements()
+    7 A:
+        A requires ORE - we can break. return 7 A
+    1 E:
+        E requires 7 A and 1 D.
+        get_simple_elements(D)
+        get_simple_elements(A)
