@@ -19,3 +19,35 @@ get_simple_elements()
         E requires 7 A and 1 D.
         get_simple_elements(D)
         get_simple_elements(A)
+
+
+9 ORE => 2 A
+
+10 A
+10 A / 2 A = 5
+5 x 9 ORE = 45 ORE
+
+
+157 ORE => 5 A
+165 ORE => 6 B
+179 ORE => 7 C
+177 ORE => 5 D
+165 ORE => 2 E
+12 D, 1 E, 8 C => 9 CDE
+7 B, 7 C => 2 BC
+3 B, 7 A, 5 D, 10 C => 8 ABCD
+44 BC, 5 ABCD, 1 CDE, 29 A, 9 E, 48 D => 1 FUEL
+
+
+
+
+7 A 29 A = 36 A
+154 B 3 B = 157 B
+154 C 10 C 8C = 172 C
+5 D 12 D 48 D = 12 D
+1 E 9 E = 10 E
+=> 1 FUEL
+
+36 A, 157 B, 172 C, 53 D, 12 D, 10 E => 1 FUEL
+
+
