@@ -1,4 +1,4 @@
-from typing import List, Tuple
+from typing import List, Tuple, Union
 
 from shared.Intcode import Intcode
 
@@ -6,9 +6,13 @@ with open('input.txt', 'r') as f:
     registry = [int(x) for x in f.readline().split(',')]
 
 
-def print_grid(grid_val: List[List[str]]):
-    for y in range(len(grid_val)):
-        print(grid_val[y])
+offset = 10
+def print_grid(grid_val: List[List[str]], xx: int, yy: int):
+    print(f'x: {xx}, y: {yy}')
+    for y in range(yy - offset, yy + offset):
+        for x in range(xx - offset, xx + offset):
+            print(grid_val[y][x], end = '')
+        print('')
 
 
 def into_grid(input_val: int, output_val: int, x: int, y: int, grid: List[List[str]]) -> Tuple[int, int]:
@@ -45,12 +49,16 @@ def into_grid(input_val: int, output_val: int, x: int, y: int, grid: List[List[s
 
 last_input = 1
 intcode = Intcode(registry, [last_input])
-x = 5
-y = 5
-grid = [[' ' for _ in range(10)] for _ in range(10)]
+x = 50
+y = 50
+grid = [[' ' for _ in range(100)] for _ in range(100)]
 for output in intcode.run():
     x, y = into_grid(last_input, output, x, y, grid)
-    print_grid(grid)
-    val = int(input("Move north (1), south (2), west (3), or east (4)\n"))
-    intcode.inputs.append(val)
-    last_input = val
+    print_grid(grid, x, y)
+    val: Union[str, None] = None
+    while val is None or len(val) == 0:
+        val = input("Move north (1), south (2), west (3), or east (4)\n")
+        if val not in ['1', '2', '3', '4']:
+            val = None
+    intcode.inputs.append(int(val))
+    last_input = int(val)
