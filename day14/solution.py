@@ -1,5 +1,6 @@
 import copy
 import math
+import sys
 from typing import List, Set
 
 
@@ -22,8 +23,8 @@ class TargetElem:
         return f"{self.count} {self.name} + req: {self.requirements}"
 
 
-def collect_values():
-    with open('input.txt', 'r') as f:
+def collect_values(file_name: str):
+    with open(file_name, 'r') as f:
         target_elements: List[TargetElem] = []
         for line in f.readlines():
             left, right = line.split(' => ')
@@ -53,11 +54,13 @@ def calculate_all_requirements(target_elements: List[TargetElem], requirements: 
     return acc
 
 
-def calculate_ore(target_elements: List[TargetElem]):
+def calculate_ore(target_elements: List[TargetElem], multiplier: int):
     fuel_element: TargetElem = next(x for x in target_elements if x.name == "FUEL")
 
     # this will be handled like a queue: first elements will be popped, and new ones appended to the end
     requirements = copy.deepcopy(fuel_element.requirements)
+    for fuel_requirement in requirements:
+        fuel_requirement.count *= multiplier
 
     while [x.name for x in requirements] != ["ORE"]:
         # pop the current requirement
@@ -85,6 +88,72 @@ def calculate_ore(target_elements: List[TargetElem]):
     return requirements[0]
 
 
-targets = collect_values()
-ore_element = calculate_ore(targets)
-print(ore_element)
+targets = collect_values('input.txt')
+print(f"PART 1: {calculate_ore(targets, 1)}")
+
+TRILLION = 1_000_000_000_000
+print(f'PART 2: calculating million')
+def find_trillion():
+    x = 1
+    step1 = 5
+    margin = .01
+
+    bottom = TRILLION
+    top = TRILLION
+    min_distance = TRILLION
+
+    growing = True
+    changed = False
+    while True:
+        res = calculate_ore(targets, x).count
+        print(f'res: {res}, x: {x}')
+        if res < TRILLION:
+            if growing is False:
+                changed = True
+                growing = True
+        else:
+            if growing is True:
+                changed = True
+                growing = False
+
+        if changed:
+            step1 = round(step1 - margin, 4)
+            print(step1)
+
+        diff1 = TRILLION - res
+        if math.fabs(min_distance) > math.fabs(diff1):
+            if diff1 >= 0:
+                bottom = x
+            elif diff1 < 0:
+                top = x
+
+        if step1 > 1:
+            if growing:
+                x *= step1
+            else:
+                x //= step1
+        elif step1 == 1:
+            step2 = TRILLION - res
+            print(step2)
+            print(f'TOP: {top}, BOTTOM: {bottom}')
+
+            for step_x in [10000, 1000, 100, 10, 1]:
+                for i in range(bottom, top, step_x):
+                    res = calculate_ore(targets, i).count
+                    if res > TRILLION:
+                        print(f'PART 2: found {i-1}')
+                        bottom = i - step_x
+                        break
+            break
+        x = round(x)
+
+
+# find_trillion()
+
+def part2_manually():
+    for i in range(1863700, 1872236, 1):  # I've found these numbers using find_trillion() -> BOTTOM and TOP. Then, I've experimented manually with step, and came close to those values
+        res = calculate_ore(targets, i).count
+        if res > TRILLION:
+            print(f'PART 2: found {i - 1}')  # it should find 1863741
+            break
+part2_manually()
