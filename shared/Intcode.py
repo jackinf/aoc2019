@@ -63,8 +63,8 @@ class Intcode:
                 self.address += 2
             elif opcode == OpCode.OUTPUT:
                 addr0 = self.get_addr0(first_pos_mode)
-                yield self.registry[addr0]
                 self.address += 2
+                yield self.registry[addr0]
                 if self.break_on_output:
                     break
             elif opcode == OpCode.JUMP_TRUE:
