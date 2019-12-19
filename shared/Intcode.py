@@ -23,7 +23,7 @@ class PosMode(IntEnum):
 
 class Intcode:
     def __init__(self, registry: List[int], inputs: List[int], **kwargs):
-        self.registry = registry + [0] * 1000
+        self.registry = registry + [0] * 10000
         self.inputs = inputs
         self.break_on_output = kwargs['break_on_output'] if 'break_on_output' in kwargs else False
         self.done = False
