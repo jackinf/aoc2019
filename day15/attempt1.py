@@ -3,6 +3,7 @@ import pygame
 from shared.Intcode import Intcode
 
 
+START_COLOR = (240, 120, 46)
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 GRAY = (180, 180, 180)
@@ -11,9 +12,9 @@ BLUE = (0, 0, 255)
 RED = (255, 0, 0)
 WINDOW_SIZE = [600, 600]
 MARGIN = 5
-WIDTH = 20
-HEIGHT = 20
-offset = 10
+WIDTH = 10
+HEIGHT = 10
+offset = 20
 
 SYMBOL_PLAYER = "D"
 SYMBOL_WALL = "#"
@@ -35,7 +36,7 @@ def print_grid(grid_val: List[List[str]], xx: int, yy: int):
 
 
 def into_grid(input_val: int, output_val: int, x: int, y: int, grid: List[List[str]]) -> Tuple[int, int]:
-    if output_val == 1 or output_val == 0:
+    if output_val == 1 or output_val == 0 or output_val == 2:
         grid[y][x] = "."
 
         if output_val == 0:
@@ -49,7 +50,7 @@ def into_grid(input_val: int, output_val: int, x: int, y: int, grid: List[List[s
             if input_val == 4:
                 grid[y][x+1] = "#"
 
-        if output_val == 1:
+        if output_val == 1 or output_val == 2:
             if input_val == 1:
                 y -= 1
             if input_val == 2:
@@ -58,12 +59,15 @@ def into_grid(input_val: int, output_val: int, x: int, y: int, grid: List[List[s
                 x -= 1
             if input_val == 4:
                 x += 1
-            grid[y][x] = "D"
 
+            if output_val == 1:
+                grid[y][x] = "D"
+            if output_val == 2:
+                print('found exit')
+                grid[y][x] = "E"
         return x, y
     else:
-        grid[y][x] = "E"
-        print('Found exit')
+        print('invalid output val')
         return x, y
 
 
@@ -77,7 +81,7 @@ def get_input() -> int:
 
 
 def new_grid() -> Tuple[List[List[str]], int, int]:
-    size = 100
+    size = 500
     x = size//2
     y = size//2
     grid_val = [[' ' for _ in range(size)] for _ in range(size)]
@@ -98,6 +102,8 @@ def text_program(last_input):
 
 def get_rect_color(grid_arg: List[List[str]], x_arg: int, y_arg: int) -> Tuple[int, int, int]:
     cell_value = grid_arg[y_arg][x_arg]
+    if x_arg == 250 and y_arg == 250:
+        return START_COLOR
     if cell_value == " ":
         return BLACK
     if cell_value == "D":
@@ -154,6 +160,7 @@ def gui_program():
                     # print(f'xx: {xx}, yy: {yy}, row: {row}, column: {column}, rect_color: {rect_color}')
                     pygame.draw.rect(screen, rect_color, pygame.Rect(xx, yy, WIDTH, HEIGHT))
             # print("====")
+            print(f'coord: x={x} y={y}')
 
             clock.tick(30)
             pygame.display.flip()
