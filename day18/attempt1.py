@@ -58,6 +58,14 @@ def get_distance_to_letter(grid: Grid, x: int, y: int, letter: str, distance: in
         return distance
 
     visited.append(to_visited_index(x, y))
+
+    # small optimization: copy visited cells only if we are at intersection
+    # we need to clone the values so that 2+ different paths won't intersect with each other
+    def is_intersection():
+        cells = [grid[x-1][y], grid[x+1][y], grid[x][y-1], grid[x][y+1]]
+        return len([cell for cell in cells if cell == "#"]) <= 2  # there are at most 2 walls near the cell
+    visited = visited[:] if is_intersection() else visited
+
     res1 = get_distance_to_letter(grid, x-1, y, letter, distance+1, visited)
     res2 = get_distance_to_letter(grid, x+1, y, letter, distance+1, visited)
     res3 = get_distance_to_letter(grid, x, y-1, letter, distance+1, visited)
@@ -67,6 +75,7 @@ def get_distance_to_letter(grid: Grid, x: int, y: int, letter: str, distance: in
     if len(results) > 0:
         return min(results)
     return None
+
 
 if __name__ == "__main__":
     grid = collect_input("test-case-1.txt")
