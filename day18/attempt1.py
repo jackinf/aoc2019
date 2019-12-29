@@ -107,15 +107,16 @@ def get_distance_to_letter(grid: Grid, x: int, y: int, letter: str, distance: in
 
 def start_find_maze_paths(grid: Grid):
     keys_len = len(get_keys(get_all_letter_with_coordinates(grid)))
-    found_distances = find_maze_paths(grid, 0, '', keys_len)
+    found_distances = find_maze_paths(grid, 0, '', keys_len, None)
     full_path_found_distances = [found_distance for found_distance in found_distances if len(found_distance[0]) == keys_len]
     full_path_shortest_distance = min(full_path_found_distances, key= lambda t: t[1])
     print(full_path_shortest_distance)
 
 
-def find_maze_paths(grid: Grid, total_distance: int, path: str, keys_len) -> List[Tuple[str, int]]:
+def find_maze_paths(grid: Grid, total_distance: int, path: str, keys_len, keyarg: Union[str, None]) -> List[Tuple[str, int]]:
     grid = copy.deepcopy(grid)
-
+    if keyarg is not None:
+        unlock_door(grid, keyarg)
     # print(f'Path: {path}, Total distance: {total_distance}')
     # print_grid(grid)
     # sleep(1)
@@ -133,8 +134,7 @@ def find_maze_paths(grid: Grid, total_distance: int, path: str, keys_len) -> Lis
         if b_dist is None:
             continue
 
-        unlock_door(grid, key_letter)
-        results = find_maze_paths(grid, total_distance + b_dist, path + key_letter, keys_len)
+        results = find_maze_paths(grid, total_distance + b_dist, path + key_letter, keys_len, key[2])
         distances += results
 
     return distances
@@ -150,6 +150,6 @@ def run_test(grid: Grid):
 
 
 if __name__ == "__main__":
-    grid = collect_input("test-case-2.txt")
+    grid = collect_input("test-case-1.txt")
     print_grid(grid)
     start_find_maze_paths(grid)
