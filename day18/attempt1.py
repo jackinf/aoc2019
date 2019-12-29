@@ -58,24 +58,22 @@ def get_distance_to_letter(grid: Grid, x: int, y: int, letter: str, distance: in
         return distance
 
     visited.append(to_visited_index(x, y))
-    for row in range(1, len(grid) - 1):
-        for col in range(1, len(grid[0]) - 1):
-            res1 = get_distance_to_letter(grid, x-1, y, letter, distance+1, visited)
-            res2 = get_distance_to_letter(grid, x+1, y, letter, distance+1, visited)
-            res3 = get_distance_to_letter(grid, x, y-1, letter, distance+1, visited)
-            res4 = get_distance_to_letter(grid, x, y+1, letter, distance+1, visited)
+    res1 = get_distance_to_letter(grid, x-1, y, letter, distance+1, visited)
+    res2 = get_distance_to_letter(grid, x+1, y, letter, distance+1, visited)
+    res3 = get_distance_to_letter(grid, x, y-1, letter, distance+1, visited)
+    res4 = get_distance_to_letter(grid, x, y+1, letter, distance+1, visited)
 
-            results = [res for res in [res1, res2, res3, res4] if res is not None]
-            if len(results) > 0:
-                return min(results)
+    results = [res for res in [res1, res2, res3, res4] if res is not None]
+    if len(results) > 0:
+        return min(results)
     return None
 
 if __name__ == "__main__":
-    grid = collect_input("test-case-0.txt")
+    grid = collect_input("test-case-1.txt")
     print_grid(grid)
     print(get_letter_locations(grid))
     print_grid(grid)
 
     player_x, player_y = find_player_pos(grid)
-    b_dist = get_distance_to_letter(copy.deepcopy(grid), player_x, player_y, 'x', 0, [])
+    b_dist = get_distance_to_letter(copy.deepcopy(grid), player_x, player_y, 'b', 0, [])
     print(b_dist)
