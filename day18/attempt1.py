@@ -1,4 +1,5 @@
 import copy
+from time import sleep
 from typing import List, Union, Tuple
 import numpy as np
 
@@ -6,6 +7,8 @@ Grid = List[List[str]]
 PLAYER_CHAR = "@"
 FLOOR_CHAR = "."
 WALL_CHAR = "#"
+CoordAndLetter = Tuple[int, int, str]
+DoorInfo = Tuple[int, int, str]
 
 
 def print_grid(grid: Grid):
@@ -20,7 +23,7 @@ def collect_input(file_name) -> Grid:
         return [[x for x in line if x != "\n"] for line in f.readlines()]
 
 
-def get_all_letter_with_coordinates(grid: Grid) -> List[Tuple[int, int, str]]:
+def get_all_letter_with_coordinates(grid: Grid) -> List[CoordAndLetter]:
     arr = np.array(grid)
 
     # mark all excluded values with x and filter x out. TODO: find a better way
@@ -33,22 +36,22 @@ def get_all_letter_with_coordinates(grid: Grid) -> List[Tuple[int, int, str]]:
     return [(x, y, grid[x][y]) for x, y in coordiates]
 
 
-def get_keys(coordinates: List[Tuple[int, int, str]]) -> List[Tuple[int, int, str]]:
+def get_keys(coordinates: List[CoordAndLetter]) -> List[CoordAndLetter]:
     return [coord for coord in coordinates if coord[2].islower()]
 
-
-def get_doors(coordinates: List[Tuple[int, int, str]]) -> List[Tuple[int, int, str]]:
+def get_doors(coordinates: List[CoordAndLetter]) -> List[CoordAndLetter]:
     return [coord for coord in coordinates if coord[2].isupper()]
 
 
 def unlock_door(grid: Grid, letter: str):
     coordinates = get_all_letter_with_coordinates(grid)
     the_key = next((key for key in get_keys(coordinates) if key[2] == letter))
-    the_door = next(door for door in get_doors(coordinates) if door[2] == letter.upper())
-    grid[the_key[0]][the_key[1]] = PLAYER_CHAR
-    grid[the_door[0]][the_door[1]] = FLOOR_CHAR
+    the_door = next((door for door in get_doors(coordinates) if door[2] == letter.upper()), None)
     p_x, p_y = find_player_pos(grid)
     grid[p_x][p_y] = "."
+    grid[the_key[0]][the_key[1]] = PLAYER_CHAR
+    if the_door is not None:
+        grid[the_door[0]][the_door[1]] = FLOOR_CHAR
 
 
 def simplity_grid(grid: Grid) -> Grid:
@@ -102,13 +105,50 @@ def get_distance_to_letter(grid: Grid, x: int, y: int, letter: str, distance: in
     return None
 
 
-if __name__ == "__main__":
-    grid = collect_input("test-case-1.txt")
+def start_find_maze_paths(grid: Grid):
+    found_distances = find_maze_paths(grid, 0, '')
+    keys_len = len(get_keys(get_all_letter_with_coordinates(grid)))
+    full_path_found_distances = [found_distance for found_distance in found_distances if len(found_distance[0]) == keys_len]
+    full_path_shortest_distance = min(full_path_found_distances, key= lambda t: t[1])
+    print(full_path_shortest_distance)
 
+
+def find_maze_paths(grid: Grid, total_distance: int, path: str) -> List[Tuple[str, int]]:
+    grid = copy.deepcopy(grid)
+
+    # print(f'Path: {path}, Total distance: {total_distance}')
+    # print_grid(grid)
+    # sleep(1)
+
+    keys = get_keys(get_all_letter_with_coordinates(grid))
+    if len(keys) == 0:
+        return [(path, total_distance)]
+
+    distances = []
+    for key in keys:
+        key_letter = key[2]
+        player_x, player_y = find_player_pos(grid)
+        b_dist = get_distance_to_letter(grid, player_x, player_y, key_letter, 0, [])
+        if b_dist is None:
+            continue
+
+        unlock_door(grid, key_letter)
+        results = find_maze_paths(grid, total_distance + b_dist, path + key_letter)
+        distances += results
+
+    return distances
+
+
+def run_test(grid: Grid):
     print_grid(grid)
     player_x, player_y = find_player_pos(grid)
     b_dist = get_distance_to_letter(copy.deepcopy(grid), player_x, player_y, 'a', 0, [])
     unlock_door(grid, 'a')
-
     print_grid(grid)
     print(b_dist)
+
+
+if __name__ == "__main__":
+    grid = collect_input("test-case-1.txt")
+    print_grid(grid)
+    start_find_maze_paths(grid)
