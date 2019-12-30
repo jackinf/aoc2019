@@ -14,7 +14,7 @@ DoorInfo = Tuple[int, int, str]
 def print_grid(grid: Grid):
     res = ""
     for line in grid:
-        res += "".join([item for item in line]) + "\n"
+        res += "".join(line) + "\n"
     print(res + "\n")
 
 
