@@ -54,7 +54,7 @@ test_case_5 = "3,52,1001,52,-5,52,3,53,1,52,56,54,1007,54,5,55,1005,55,26,1001,5
 print(sol.run_part2(parse_inputs(test_case_4)))
 print(sol.run_part2(parse_inputs(test_case_5)))
 
-with open('input.txt', 'r') as f:
+with open('test-case-2.txt', 'r') as f:
     parsed_registry = parse_inputs(f.readline())
     print("\nPART 1")
     print(sol.run_part1(parsed_registry))

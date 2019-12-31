@@ -125,7 +125,7 @@ def lcm(a, b):
     return a * b / math.gcd(a, b)
 
 
-with open('input.txt', 'r') as f:
+with open('test-case-2.txt', 'r') as f:
     planets = []
     for line in f.readlines():
         coord_step1 = line.strip()[1:-1].split(',')

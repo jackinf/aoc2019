@@ -9,7 +9,7 @@ def get_fuel_requirement(mass: int):
 # print(get_fuel_requirement(100756))
 
 
-file = open('input.txt', 'r')
+file = open('test-case-2.txt', 'r')
 with file as f:
     answer = sum([get_fuel_requirement(int(x.strip())) for x in f.readlines()])
 print(answer)

@@ -20,7 +20,7 @@ def from_node_into_array(node: Node) -> List[str]:
     return res
 
 
-with open('input.txt', 'r') as f:
+with open('test-case-2.txt', 'r') as f:
     lines = [x.strip().split(')') for x in f.readlines()]  # parse the input so that format is Array[Array[2]]
     all_unique = set(reduce(list.__add__, lines))  # reduce operation flattens the array; set filters out duplicates
 

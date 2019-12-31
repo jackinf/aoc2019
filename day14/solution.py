@@ -88,7 +88,7 @@ def calculate_ore(target_elements: List[TargetElem], multiplier: int):
     return requirements[0]
 
 
-targets = collect_values('input.txt')
+targets = collect_values('test-case-2.txt')
 print(f"PART 1: {calculate_ore(targets, 1)}")
 
 TRILLION = 1_000_000_000_000

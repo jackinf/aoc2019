@@ -10,15 +10,15 @@ def plot_point(ax, point, angle, length):
      # find the end point
      endy = length * math.sin(math.radians(angle))
      endx = length * math.cos(math.radians(angle))
-     m = math.tan(angle)
+     m = math.tan(math.radians(angle))
      print((endx, endy, m, angle))
      ax.plot([x, endx], [y, endy])
 
 
 if __name__ == "__main__":
      ax = plt.subplot(111)
-     ax.set_ylim([0, 50])   # set the bounds to be 10, 10
-     ax.set_xlim([0, 50])
+     ax.set_ylim([0, 10])   # set the bounds to be 10, 10
+     ax.set_xlim([0, 10])
 
      # Change major ticks to show every 5.
      ax.xaxis.set_major_locator(MultipleLocator(1))

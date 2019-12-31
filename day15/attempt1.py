@@ -23,7 +23,7 @@ screen = pygame.display.set_mode(WINDOW_SIZE)
 pygame.display.set_caption("Day 15")
 
 
-with open('input.txt', 'r') as f:
+with open('test-case-2.txt', 'r') as f:
     registry = [int(x) for x in f.readline().split(',')]
 
 

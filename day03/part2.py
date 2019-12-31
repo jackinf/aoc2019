@@ -53,7 +53,7 @@ test3_inputs = {
 }
 
 
-with open('input.txt', 'r') as f:
+with open('test-case-2.txt', 'r') as f:
     line1 = f.readline()
     line2 = f.readline()
     task_input = {

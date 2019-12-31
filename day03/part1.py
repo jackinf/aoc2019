@@ -89,7 +89,7 @@ test3_inputs = {
     "wire2": "U98,R91,D20,R16,D67,R40,U7,R15,U6,R7"
 }
 
-with open('input.txt', 'r') as f:
+with open('test-case-2.txt', 'r') as f:
     line1 = f.readline()
     line2 = f.readline()
     task_input = {

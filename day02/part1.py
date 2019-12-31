@@ -19,7 +19,7 @@ def solve_part1(inputs: List[int]) -> int:
             raise Exception("Unknown action")
 
 
-with open('input.txt', 'r') as f:
+with open('test-case-2.txt', 'r') as f:
     file_inputs = [int(x) for x in f.readline().split(',')]
     file_inputs[1] = 12
     file_inputs[2] = 2

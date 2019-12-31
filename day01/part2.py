@@ -14,6 +14,6 @@ print(sol.calculate(14))
 print(sol.calculate(1969))
 print(sol.calculate(100756))
 
-with open('input.txt', 'r') as f:
+with open('test-case-2.txt', 'r') as f:
     answer = sum([sol.calculate(int(x.strip())) for x in f.readlines()])
 print(answer)

@@ -32,7 +32,7 @@ def calculate_phase(numbers: List[int]) -> List[int]:
 
 
 if __name__ == "__main__":
-    inputs = read_inputs('input.txt')
+    inputs = read_inputs('test-case-2.txt')
 
     phase_inputs = np.copy(inputs)
     for _ in range(100):

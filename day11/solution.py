@@ -112,7 +112,7 @@ class PaintRobot:
                 self.intcode.append_input(ground_color)
 
 
-with open('input.txt', 'r') as f:
+with open('test-case-2.txt', 'r') as f:
     registry = [int(x) for x in f.readline().split(',')]
     grid1 = Grid()
     robot1 = PaintRobot(registry, grid1, Color.Black)

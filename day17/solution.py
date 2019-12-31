@@ -53,7 +53,7 @@ def read_test_case(file_name):
 
 
 if __name__ == "__main__":
-    registry = collect_input("input.txt")
+    registry = collect_input("test-case-2.txt")
     ascii_output = read_ascii_output(registry)
     # ascii_output = read_test_case('test-case.txt')
     # print(ascii_output)

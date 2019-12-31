@@ -48,7 +48,7 @@ class AsteroidManager:
 
 am = AsteroidManager()
 
-with open('input.txt', 'r') as f:
+with open('test-case-2.txt', 'r') as f:
     matrix1 = am.build_matrix('\n' + ''.join(f.readlines()))
     grid1 = am.build_grid(matrix1)
     # grid1.print_grid()

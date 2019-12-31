@@ -15,6 +15,6 @@ def solve_part2(inputs: List[int]) -> int:
     return -1
 
 
-with open('input.txt', 'r') as f:
+with open('test-case-2.txt', 'r') as f:
     file_inputs = [int(x) for x in f.readline().split(',')]
     print(f'Solution to part 2: {solve_part2(file_inputs)}')

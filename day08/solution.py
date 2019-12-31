@@ -103,7 +103,7 @@ print(sol.run(parse_inputs("123456789012"), 3, 2))
 print("\nTEST CASE 2")
 print(sol.run(parse_inputs("0222112222120000"), 2, 2))
 
-with open("input.txt", "r") as f:
+with open("test-case-2.txt", "r") as f:
     parsed_inputs = parse_inputs(f.readline())
     print("\nSOLUTION")
 

@@ -9,7 +9,7 @@ sol.run([int(x) for x in test_case.split(',')], [7])  # less than 8 outputs 999
 sol.run([int(x) for x in test_case.split(',')], [8])  # equal to 8 outputs 1000
 sol.run([int(x) for x in test_case.split(',')], [9])  # more than 8 outputs 1001
 
-with open('input.txt', 'r') as f:
+with open('test-case-2.txt', 'r') as f:
     inputs = [int(x) for x in f.readline().split(',')]
     print('=== PART 1 ===')
     solution1 = sol.run(inputs[:], [1])
