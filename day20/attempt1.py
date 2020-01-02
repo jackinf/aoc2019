@@ -1,5 +1,7 @@
 from typing import List, Tuple, Union
 
+from dijkstar import Graph, find_path
+
 Grid = List[List[str]]
 Coord = Tuple[int, int, str]
 
@@ -92,12 +94,25 @@ def find_connections_start(grid: Grid, coordinates: List[Coord]) -> List[Tuple[s
     for coordinate in coordinates:
         coord_x, coord_y, letter = coordinate
         connections += find_connection(letter, 0, coord_x, coord_y, [])
-        # TODO: use zip command to make letter and step pairs for now :D
-    return connections
+
+    # use zip command to make letter and step pairs for now :D
+    results = []
+    for i, (letter_pair, steps) in enumerate(zip(connections, connections[1:])):
+        if i % 2 == 0:
+            results.append((letter_pair, steps))
+    return results
+
+
+def find_best_path(connections: List[Tuple[str, int]]):
+    graph = Graph()
+    for letter_pair, steps in connections:
+        [left, right] = letter_pair.split("-")
+        graph.add_edge(left, right, steps)
+    return find_path(graph, 'AA', 'ZZ')
 
 
 if __name__ == "__main__":
-    grid = collect_input(file_name="test-case-1.txt")
+    grid = collect_input(file_name="input.txt")
     fix_grid(grid)
     print_grid(grid)
     letter_coordinates = find_all_letters(grid)
@@ -106,4 +121,5 @@ if __name__ == "__main__":
     connections = find_connections_start(grid, letter_coordinates)
     print(connections)
 
-
+    path = find_best_path(connections)
+    print(path.total_cost - 1)
