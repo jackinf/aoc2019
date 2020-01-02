@@ -25,17 +25,25 @@ def print_grid(grid: Grid):
 
 
 def get_letter_coordinate(grid: Grid, x: int, y: int) -> Coord:
-    if grid[y+1][x].isalpha():
-        return x, y+1, grid[y][x] + grid[y+1][x]
-    if  grid[y][x+1].isalpha():
-        return x+1, y, grid[y][x] + grid[y][x+1]
+    # Vertical conditions
+    if grid[y+1][x] == "." and grid[y-1][x].isalpha():
+        return x, y, grid[y-1][x] + grid[y][x]
+    if grid[y-1][x] == "." and grid[y+1][x].isalpha():
+        return x, y, grid[y][x] + grid[y+1][x]
+
+    # Horizontal conditions
+    if grid[y][x+1] == "." and grid[y][x-1].isalpha():
+        return x, y, grid[y][x-1] + grid[y][x]
+    if grid[y][x-1] == "." and grid[y][x+1].isalpha():
+        return x, y, grid[y][x] + grid[y][x+1]
+
     return None
 
 
 def find_all_letters(grid: Grid):
     found = []
-    for y in range(len(grid)-1):
-        for x in range(len(grid[0])-1):
+    for y in range(1, len(grid)-1):
+        for x in range(1, len(grid[0])-1):
             if grid[y][x].isalpha():
                 item = get_letter_coordinate(grid, x, y)
                 if item is not None:
