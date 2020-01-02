@@ -1,4 +1,4 @@
-from typing import List, Tuple
+from typing import List, Tuple, Union
 
 Grid = List[List[str]]
 Coord = Tuple[int, int, str]
@@ -51,11 +51,8 @@ def find_all_letters(grid: Grid):
     return found
 
 
-def extract_letter(coordinates: List[Coord], x: int, y: int) -> str:
-    letter = next((coordinate[2] for coordinate in coordinates if coordinate[0] == x and coordinate[1] == y), None)
-    if letter is None:
-        raise Exception(f"letter not found at x:{x}, y:{y}")
-    return letter
+def extract_letter(coordinates: List[Coord], x: int, y: int) -> Union[str, None]:
+    return next((coordinate[2] for coordinate in coordinates if coordinate[0] == x and coordinate[1] == y), None)
 
 
 def in_bounds(grid: Grid, x: int, y: int) -> bool:
@@ -72,8 +69,9 @@ def find_connections_start(grid: Grid, coordinates: List[Coord]) -> List[Tuple[s
             return []
 
         if grid[y][x].isalpha():
+            # print(f'Found: {grid[y][x]}, x: {x}, y: {y}')
             letter = extract_letter(coordinates, x, y)
-            if initial_letter != letter:
+            if letter is not None and initial_letter != letter:
                 return [f'{initial_letter}-{letter}', steps-1]  # exclude the letter itself as we count only steps
 
         visited.append((x, y))
@@ -84,15 +82,17 @@ def find_connections_start(grid: Grid, coordinates: List[Coord]) -> List[Tuple[s
         res4 = find_connection(initial_letter, steps+1, x, y+1, visited[:])
         results = [res for res in [res1, res2, res3, res4] if len(res) > 0]
 
-        return results
+        return [res for res1 in results for res in res1]
 
     connections = []
-    res_x = find_connection('AA', 0, 9, 1, [])
-    connections.append(res_x)
 
-    # for coordinate in coordinates:
-    #     coord_x, coord_y, letter = coordinate
-    #     connections += find_connection(0, coord_x, coord_y, [])
+    # res_x = find_connection('AA', 0, 9, 1, [])
+    # connections.append(res_x)
+
+    for coordinate in coordinates:
+        coord_x, coord_y, letter = coordinate
+        connections += find_connection(letter, 0, coord_x, coord_y, [])
+        # TODO: use zip command to make letter and step pairs for now :D
     return connections
 
 
