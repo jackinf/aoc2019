@@ -51,32 +51,48 @@ def find_all_letters(grid: Grid):
     return found
 
 
+def extract_letter(coordinates: List[Coord], x: int, y: int) -> str:
+    letter = next((coordinate[2] for coordinate in coordinates if coordinate[0] == x and coordinate[1] == y), None)
+    if letter is None:
+        raise Exception(f"letter not found at x:{x}, y:{y}")
+    return letter
+
+
+def in_bounds(grid: Grid, x: int, y: int) -> bool:
+    return 0 < x < len(grid[0]) and 0 < y < len(grid)
+
+
 def find_connections_start(grid: Grid, coordinates: List[Coord]) -> List[Tuple[str, int]]:
-    def find_connection(steps, x, y, visited) -> List[Tuple[str, int]]:
-        if 0 > x or len(grid[0]) <= x or 0 > y or len(grid) <= y or grid[y][x] == "#":
+    def find_connection(initial_letter: str, steps, x, y, visited) -> List[Tuple[str, int]]:
+        if not in_bounds(grid, x, y):
+            return []
+        if grid[y][x] == "#" or grid[y][x] == " ":
+            return []
+        if (x, y) in visited:
             return []
 
         if grid[y][x].isalpha():
-            letter = next((coordinate[2] for coordinate in coordinates if coordinate[0] == x and coordinate[1] == y), None)
-            if letter is None:
-                raise Exception(f"letter not found at x:{x}, y:{y}")
-            return [letter, steps]
+            letter = extract_letter(coordinates, x, y)
+            if initial_letter != letter:
+                return [f'{initial_letter}-{letter}', steps-1]  # exclude the letter itself as we count only steps
 
         visited.append((x, y))
 
-        results = []
-        results += find_connection(steps+1, x+1, y, visited[:])
-        results += find_connection(steps+1, x-1, y, visited[:])
-        results += find_connection(steps+1, x, y-1, visited[:])
-        results += find_connection(steps+1, x, y+1, visited[:])
-        results = [res for res in results if len(res) > 0]
+        res1 = find_connection(initial_letter, steps+1, x+1, y, visited[:])
+        res2 = find_connection(initial_letter, steps+1, x-1, y, visited[:])
+        res3 = find_connection(initial_letter, steps+1, x, y-1, visited[:])
+        res4 = find_connection(initial_letter, steps+1, x, y+1, visited[:])
+        results = [res for res in [res1, res2, res3, res4] if len(res) > 0]
 
         return results
 
     connections = []
-    for coordinate in coordinates:
-        coord_x, coord_y, letter = coordinate
-        connections += find_connection(0, coord_x, coord_y, [])
+    res_x = find_connection('AA', 0, 9, 1, [])
+    connections.append(res_x)
+
+    # for coordinate in coordinates:
+    #     coord_x, coord_y, letter = coordinate
+    #     connections += find_connection(0, coord_x, coord_y, [])
     return connections
 
 
