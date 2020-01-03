@@ -2,6 +2,8 @@ from typing import List, Tuple, Union
 
 from dijkstar import Graph, find_path
 
+from day20.own_dijkstra_algo_1 import MyGraph, my_dijkstra, my_shortest
+
 Grid = List[List[str]]
 Coord = Tuple[int, int, str]
 
@@ -111,8 +113,24 @@ def find_best_path(connections: List[Tuple[str, int]]):
     return find_path(graph, 'AA', 'ZZ')
 
 
+def find_best_path_1(connections: List[Tuple[str, int]]):
+    g = MyGraph()
+    letter_pairs = [item[0].split('-') for item in connections]
+    all_letters = set([x for y in letter_pairs for x in y])
+    for letter in all_letters:
+        g.add_vertex(letter)
+    for letter_pair, steps in connections:
+        [left, right] = letter_pair.split("-")
+        g.add_edge(left, right, steps)
+    my_dijkstra(g, g.get_vertex('AA'))
+    target = g.get_vertex('ZZ')
+    path = [target.get_id()]
+    my_shortest(target, path)
+    print('The shortest path : %s' % (path[::-1]))
+
+
 if __name__ == "__main__":
-    grid = collect_input(file_name="input.txt")
+    grid = collect_input(file_name="test-case-2.txt")
     fix_grid(grid)
     print_grid(grid)
     letter_coordinates = find_all_letters(grid)
@@ -123,3 +141,5 @@ if __name__ == "__main__":
 
     path = find_best_path(connections)
     print(path.total_cost - 1)
+
+    find_best_path_1(connections)
